@@ -9,6 +9,8 @@ class Application extends StatefulWidget {
 }
 
 class ApplicationState extends State<Application> {
+  Color gray = const Color(0xFF1A1A1A);
+
   double? frequency;
   String? note;
   int? octave;
@@ -28,8 +30,7 @@ class ApplicationState extends State<Application> {
 
     flutterFft.onRecorderStateChanged.listen(
             (data) => {
-          setState(
-                () => {
+          setState(() => {
               frequency = data[1] as double,
               note = data[2] as String,
               octave = data[5] as int,
@@ -38,11 +39,7 @@ class ApplicationState extends State<Application> {
           flutterFft.setNote = note!,
           flutterFft.setFrequency = frequency!,
           flutterFft.setOctave = octave!,
-        },
-        onError: (err) {
-          print("Error: $err");
-        },
-        onDone: () => {print("Done")});
+        });
   }
 
   @override
@@ -52,7 +49,7 @@ class ApplicationState extends State<Application> {
     note = flutterFft.getNote;
     octave = flutterFft.getOctave;
 
-    flutterFft.setSubscriptionDuration = 0.1;
+    flutterFft.setSubscriptionDuration = 0.08; //Faster update
 
     super.initState();
     _initialize();
@@ -60,42 +57,52 @@ class ApplicationState extends State<Application> {
 
   @override
   Widget build(BuildContext context) {
-    Color gray = const Color(0xFF1A1A1A);
     return MaterialApp(
-        title: "Simple flutter fft example",
+        title: "Tuna Freq",
         theme: ThemeData.dark(),
         color: Colors.blue,
         home: Scaffold(
           backgroundColor: gray,
-          body: Center(
-            child:
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(10))
-                    ),
-                    child: isRecording!
-                        ? Text("Current note: ${note!} : ${octave!.toString()}",
-                        style: TextStyle(fontSize: 30, color: gray))
-                        : Text("Not Recording", style: TextStyle(fontSize: 35, color: gray)),
-                  ),
-                  Container(
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10))
-                      ),
-                      child: isRecording!
-                          ? Text(
-                          "Current frequency: ${frequency!.toStringAsFixed(2)}",
-                          style: TextStyle(fontSize: 30, color: gray))
-                          : Text("Not Recording", style: TextStyle(fontSize: 35, color: gray))
-                  )
-                ].map((e) => Padding(padding: const EdgeInsets.all(10), child: e)).toList(),
-              )
-          ),
+          body: Column(
+            children: [
+              AppBody(),
+            ],
+          )
         ));
+  }
+
+  Center AppBody()
+  {
+    return Center(
+      heightFactor: 5,
+        child:
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+              ),
+              child: isRecording!
+                  ? Text("Current note: ${note!} : ${octave!.toString()}",
+                  style: TextStyle(fontSize: 30, color: gray))
+                  : Text("Not Recording", style: TextStyle(fontSize: 35, color: gray)),
+            ),
+            Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                ),
+                child: isRecording!
+                    ? Text(
+                  "Current frequency:            \n ${frequency!.toStringAsFixed(2)}",
+                  style: TextStyle(fontSize: 30, color: gray),
+                  textAlign: TextAlign.center,)
+                    : Text("Not Recording", style: TextStyle(fontSize: 35, color: gray))
+            )
+          ].map((e) => Padding(padding: const EdgeInsets.all(10), child: e)).toList(),
+        )
+    );
   }
 }

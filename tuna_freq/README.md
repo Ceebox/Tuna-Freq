@@ -1,6 +1,7 @@
 # tuna_freq
 
-An app that lets you measure frequencies with your microphone
+An app that lets you measure frequencies with your microphone, adapted from the FlutterFTT sample code.
+This was made for a small project for school.
 
 ## Getting Started
 
